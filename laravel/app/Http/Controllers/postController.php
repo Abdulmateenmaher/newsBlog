@@ -69,10 +69,11 @@ class postController extends Controller
   }
 
   public function destroy($id){
-    $post=Post::find($id);
+    $user_id=auth()->user()->id;
+    $post=Post::where('id',$id)->where('user_id',$user_id);
 
-    $post->comments->delete();
-    $post->likes->delete();
+    // $post->comments->delete();
+    // $post->likes->delete();
     $post->delete();
     return response()->json([
         'status'=>'post deleted'

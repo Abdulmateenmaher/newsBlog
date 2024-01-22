@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Supaport\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 
 
 class ApiController extends Controller
