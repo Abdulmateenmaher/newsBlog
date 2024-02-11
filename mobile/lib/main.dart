@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart%20';
+import 'package:newsblog/constants.dart';
 import 'package:newsblog/widgets.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:newsblog/shimmers.dart';
+import 'package:http/http.dart' as http;
+import 'Post.dart';
+import 'Services/postServices.dart';
+
+
 
 void main() {
   runApp(const HomePage());
@@ -32,10 +40,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int x=0;
-  static String title='News Title with las one updated in chile';
-  int titleLenght=title.length<30?title.length:30;
-  static String description='Honesty is always admired by people in society. It is one of the greatest human qualities. An honest person will choose the path of truth and be virtuous throughout life. The character of an honest person is free from deceptions and accompanies truthfulness and probity in life.Honesty is always admired by people in society. It is one of the greatest human qualities. An honest person will choose the path of truth and be virtuous throughout life. The character of an honest person is free from deceptions and accompanies truthfulness and probity in life. Honesty is always admired by people in society. It is one of the greatest human qualities. An honest person will choose the path of truth and be virtuous throughout life. The character of an honest person is free from deceptions and accompanies truthfulness and probity in life.Honesty is always admired by people in society. It is one of the greatest human qualities. An honest person will choose the path of truth and be virtuous throughout life. The character of an honest person is free from deceptions and accompanies truthfulness and probity in life.';
-  int descrlength=description.length<60?title.length:60;
+
 
   bool isFavorite=false;
   dynamic addToFavorites(){
@@ -43,7 +48,6 @@ class _HomePageState extends State<HomePage> {
       isFavorite=!isFavorite;
     });
   }
-
  dynamic writeAComment(){
    setState(() {
 
@@ -55,7 +59,29 @@ class _HomePageState extends State<HomePage> {
      isLiked=!isLiked;
    });
   }
-
+  void initState(){
+    super.initState();
+    getPosts();
+  }
+   List posts=[];
+String barear='13|fYKr4UhVxViYyM5ybOkz8JmnQYTCdtAIyggZGafD4192f728';
+final uri=Uri.parse(getpostlink);
+  Future<List> getPosts () async{
+    var response=await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $barear',
+      }
+       );
+    setState(() {
+      final json=jsonDecode(response.body) as Map;
+      posts=json['posts'];
+    });
+    print(posts);
+    return posts;
+  }
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
@@ -63,14 +89,12 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.white,
           iconSize: 32,
-          currentIndex: x,
+          currentIndex: 0,
           type: BottomNavigationBarType.fixed,
-
           fixedColor: Colors.black,
-          selectedLabelStyle: TextStyle(fontSize: 1),
-          unselectedLabelStyle: TextStyle(fontSize: 1),
+          selectedLabelStyle: const TextStyle(fontSize: 1),
+          unselectedLabelStyle: const TextStyle(fontSize: 1),
           items: const [
-
             BottomNavigationBarItem (
               label: '',
               icon: Icon(Icons.home,),
@@ -88,11 +112,9 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.person,),
             ),
           ],
-
         ),
           body: PageView(
             scrollDirection: Axis.horizontal,
-
             children:[
               SafeArea(
                 child: Column(
@@ -114,100 +136,119 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    Container(
-                      color: Colors.white24,
-                      height: MediaQuery.of(context).size.height-155,
-                      child: ListView(
-                        scrollDirection: Axis.vertical,
-                        children: [
-                          for(int i=1; i<10; i++)
-                            Padding(
-                                padding: const EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 29),
-                                child: Stack(
-                                    alignment: Alignment.bottomLeft,
-                                    children: [
-                                      PhysicalModel(
-                                        elevation: 10,
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(10),
-                                        shadowColor: Colors.black,
-                                        clipBehavior: Clip.antiAlias ,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: Colors.white,
-                                            ),
-                                            height: 305,
-                                            padding: const EdgeInsets.only(right: 3,bottom: 3),
-                                            child:Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                // PictureShimmer(),
-                                                Image.asset('images/pelistinegirl.png'),
-                                                // DescriptionShimmer(),
-                                                Description(descrlength: descrlength, description: description, title: title,),
-                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    PostProfile(),
-                                                    // ReactionButtonsShimmer(),
-                                                    ReactionButtons(writeComment: writeAComment, likeOrDisklike: likeOrDisklike, addToFavorites: addToFavorites,isFavorite: isFavorite, isLiked: isLiked,),
-                                                  ],
-                                                )
-
-                                              ],
-                                            )
-                                        ),
+                    RefreshIndicator(
+                      onRefresh: getPosts,
+                      child: Container(
+                        color: Colors.white24,
+                        height: MediaQuery.of(context).size.height-155,
+                        child: ListView.builder(
+                          itemCount: posts.length,
+                          itemBuilder: (BuildContext context ,int index){
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 29),
+                               child: Stack(
+                               alignment: Alignment.bottomLeft,
+                               children: [
+                                 PhysicalModel(
+                                   elevation: 10,
+                                    color: Colors.grey,
+                                   borderRadius: BorderRadius.circular(10),
+                                   shadowColor: Colors.black,
+                                   clipBehavior: Clip.antiAlias ,
+                                   child: Container(
+                                     decoration: BoxDecoration(
+                                     borderRadius: BorderRadius.circular(10),
+                                     color: Colors.white,
                                       ),
-                                      Post_Title(titleLenght: titleLenght, title: title),
-                                      // TitileShimmer(),
-                                      Container(
+                                     padding: const EdgeInsets.only(right: 3,bottom: 3),
+                                     child:Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // PictureShimmer(),
+                                          Image.asset('images/pelistinegirl.png'),
+                                          // DescriptionShimmer(),
+                                          Description( description: posts[index]['description'].toString(), title: posts[index]['title'].toString(),),
+                                          Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                              PostProfile(),
+                                              // ReactionButtonsShimmer(),
+                                              // ReactionButtons(writeComment: writeAComment, likeOrDisklike: likeOrDisklike, addToFavorites: addToFavorites,isFavorite: isFavorite, isLiked: isLiked,),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                      padding:  EdgeInsets.only(right: 30,top: 10),
+                                                      child:  Row(children: [
+                                                        GestureDetector(
+                                                            onTap:()async{
+                                                              setState(() {
+                                                                isLiked=!isLiked;
+                                                                if(isLiked==true){
+                                                                  submitLike(index,barear);
+                                                                }
+                                                              });
+                                                            },
+                                                            child: isLiked==true? Icon(CupertinoIcons.hand_thumbsup):Icon(CupertinoIcons.hand_thumbsup_fill,color: Colors.blue.shade800,)
 
-                                        alignment: Alignment.bottomRight,
-                                        height: 200,
-                                        child: Container(
-                                          margin: EdgeInsets.only(bottom: 35),
-
-                                          child: PopupMenuButton(
-                                              color: Colors.white,
-                                              icon: Icon(Icons.more_horiz,size: 40,color: Colors.black26,),
-
-                                              itemBuilder: (context)=>[
-                                                PopupMenuItem(height: 20,
-                                                    child: Row(
-                                                      children: [
-                                                        Text('Edit')
-                                                      ],)),
-                                                PopupMenuItem(height: 20,
-                                                    child: Row(
-                                                      children: [
-                                                        Text('Edit')
-                                                      ],)),
-
-                                          ]),
+                                                        ),
+                                                        SizedBox(width: 20,),
+                                                        GestureDetector(
+                                                            onTap: (){
+                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>SinglePost()));
+                                                            },
+                                                            child: Icon(CupertinoIcons.text_bubble_fill)),
+                                                        SizedBox(width: 20,),
+                                                        GestureDetector(
+                                                          onTap: addToFavorites,
+                                                          child: isFavorite==true?
+                                                          const Icon(CupertinoIcons.heart_fill,color: Colors.red,):const Icon(CupertinoIcons.heart),
+                                                        )
+                                                      ],),
+                                                    )
+                                                    // Shimmer3(),
+                                                  ],)
+                                              ],)
+                                        ],)
+                                     ),
+                                   ),
+                                 Post_Title( title: posts[index]['title'].toString()),
+                            // TitileShimmer(),
+                               Container(
+                                 alignment: Alignment.bottomRight,
+                                 height: 200,
+                                 child: Container(
+                                    margin: EdgeInsets.only(bottom: 35),
+                                   child: PopupMenuButton(
+                                      color: Colors.white,
+                                      icon: Icon(Icons.more_horiz,size: 40,color: Colors.black26,),
+                                    itemBuilder: (context)=>[
+                                      const PopupMenuItem(height: 20,
+                                        child: Row(
+                                         children: [
+                                          Text('Edit')
+                                          ],)),
+                                      const PopupMenuItem(height: 20,
+                                          child: Row(
+                                             children: [
+                                             Text('Edit')
+                                             ],)
+                                              ),
+                                           ]),
                                         ),
                                       )
-
-
-
-                                    ])),
-
-                        ],
+                                 ])
+                            );
+                          },
+                          scrollDirection: Axis.vertical,
+                        ),
                       ),
                     )
-
-
                   ],
-
                 ),
               ),
-
           ])
-
       ),
     );
   }
 }
-
-
-

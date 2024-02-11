@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:newsblog/Post.dart';
+
 class PostProfile extends StatelessWidget {
   const PostProfile({
     super.key,
@@ -64,42 +66,15 @@ class ReactionButtons extends StatelessWidget {
             ),
             SizedBox(width: 20,),
             GestureDetector(
-                onTap: (){
-              showDialog(context: context,
-                  builder: (context){
-                    return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white,
-                          ),
-                       margin: EdgeInsets.only(left: 12,right: 12,bottom: MediaQuery.of(context).size.height-400,top: MediaQuery.of(context).size.height-600),
-                      height: 100,width: 200,
-                      alignment: Alignment.bottomCenter,
-                          child:Dialog(
-                            child: TextField(
-                              enabled: true,
-                            autofocus: true,
-                            onTap: writeComment,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none
-                              )
-                            ),
-                            ),
-                          )
-
-
-                    );
-                  });
-            },
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SinglePost()));
+              },
                 child: Icon(CupertinoIcons.text_bubble_fill)),
             SizedBox(width: 20,),
             GestureDetector(
               onTap: addToFavorites,
               child: isFavorite==true?
-              const Icon(CupertinoIcons.heart_fill,color: Colors.red,):
-              const Icon(CupertinoIcons.heart),
+              const Icon(CupertinoIcons.heart_fill,color: Colors.red,):const Icon(CupertinoIcons.heart),
             )
           ],),
         )
@@ -112,11 +87,9 @@ class ReactionButtons extends StatelessWidget {
 class Post_Title extends StatelessWidget {
   const Post_Title({
     super.key,
-    required this.titleLenght,
     required this.title,
   });
 
-  final int titleLenght;
   final String title;
 
   @override
@@ -128,10 +101,20 @@ class Post_Title extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(10)
             ),
-            margin: EdgeInsets.only(bottom: 90),
+            margin:title.length>30? EdgeInsets.only(bottom: 70):EdgeInsets.only(bottom: 90),
             padding: EdgeInsets.only(left: 10,right: 5),
             width: MediaQuery.of(context).size.width/1.3,
-            child:Row(mainAxisAlignment: MainAxisAlignment.start, children: [ for(int i=0; i<titleLenght; i++) Text(title[i],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),Text(' ...',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),)],)
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                  title.length<30 ?
+                  Text(title,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),):
+                  Text(title.substring(1,30),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+                
+                ,
+
+                title.length>30 ?
+                  Text(' ...',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),):Container()],)
         )
     );
   }
@@ -140,27 +123,23 @@ class Post_Title extends StatelessWidget {
 class Description extends StatelessWidget {
   const Description({
     super.key,
-    required this.descrlength,
     required this.description, required this.title,
   });
-
-  final int descrlength;
   final String description;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          for(int i=0; i<descrlength; i++)
-            Text(description[i])
-        ],),
-        if(description.length>90 )
-          Row(children: [
-            for(int i=60; i<90; i++)
-              Text(description[i]),
-            GestureDetector(
+          description.length<60?
+          Text(description):
+          Text(description.substring(1,50),),
+
+        Row(
+          children: [
+          GestureDetector(
               onTap: (){
                 showDialog(context: context,
                     builder: (context){
@@ -190,14 +169,12 @@ class Description extends StatelessWidget {
                       );
                     });
               },
-              child: const Text(' Read more...  ',style: TextStyle(color: Colors.blue),),
+
+              child:
+              description.length>60? const Text(' Read more...  ',style: TextStyle(color: Colors.blue),):Container(),
             )
           ],),
-        if(description.length<90 && description.length>50 )
-          Row(children: [
-            for(int i=50; i<description.length; i++)
-              Text(description[i])
-          ],),
+
       ],
     );
   }
