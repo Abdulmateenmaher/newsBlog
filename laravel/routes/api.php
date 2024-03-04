@@ -30,18 +30,22 @@ Route::get('logout',[ApiController::class,"logout"]);
 
 
 Route::get('/posts',[postController::class,'index']);
-Route::post('/posts',[postController::class,'store']);
+Route::post('/createpost',[postController::class,'store']);
 Route::get('posts/{id}',[postController::class,'show']);
-Route::put('posts/{id}',[postController::class,'update']);
+Route::put('posts/{id}/update',[postController::class,'update']);
 Route::delete('posts/{id}',[postController::class,'destroy']);
 
 
 Route::get('posts/{id}/comments',[commentController::class,'index']);
-Route::post('posts/{id}comments',[commentController::class,'store']);
+Route::post('posts/{id}/comments',[commentController::class,'store']);
 Route::put('comments/{id}',[commentController::class,'update']);
-Route::delete('comments/{id}',[commentController::class,'destroy']);
+Route::delete('/comments/{id}',[commentController::class,'destroy']);
 
-Route::post('/posts/{id}/likes',[likeController::class,'create']);
+// Route::post('/posts/{id}/like',[likeController::class,'create']);
+Route::get('/posts/{id}/likes/',[likeController::class,'index']);
+Route::post('/posts/{id}/like/',[likeController::class,'like']);
+Route::delete('/posts/{id}/dislike/',[likeController::class,'dislike']);
+
 
 
 });

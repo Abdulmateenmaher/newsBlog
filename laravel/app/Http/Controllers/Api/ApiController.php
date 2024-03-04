@@ -70,7 +70,7 @@ public function profile(){
 
     return response()->json([
         "status" => true,
-        "message" => "profile Date",
+        "message" => "profile Data",
         "data" => $data
     ]);
 

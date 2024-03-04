@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ class postController extends Controller
   public function index(){
 
 
-   $post=Post::all();
+   $post=Post::orderBy("created_at","desc")->get();
    return response()->json([
     "posts"=> $post
    ]);
@@ -19,10 +20,13 @@ class postController extends Controller
   }
 
   public function show($id){
+
+    $comments=Comment::where('post_id',$id)->get()->all();
     $post=Post::where('id',$id)->withCount('comments','likes')->get();
 
     return response()->json([
-        "post"=>$post
+        "post"=>$post,
+        "comments"=>$comments
     ]);
   }
 
@@ -57,10 +61,15 @@ class postController extends Controller
         'title'=>'string',
         'description'=>'required|string',
     ]);
+    if($post->user_id == \Auth::user()->id){
     $post->update([
         'title'=>$request->title,
-        'descriptiono'=>$request->description
-    ]);
+        'description'=>$request->description
+    ]);} else{
+        return response()->json([
+          'message'=>'not allowed to update others post'
+        ]);
+    }
 
     return response()->json([
      'status'=>'post updated',
@@ -69,14 +78,32 @@ class postController extends Controller
   }
 
   public function destroy($id){
-    $user_id=auth()->user()->id;
-    $post=Post::where('id',$id)->where('user_id',$user_id);
 
+    $user_id=\Auth()->user()->id;
+
+    $post=Post::find($id);
     // $post->comments->delete();
     // $post->likes->delete();
+    $comments=Comment::where('post_id',$id)->get()->all();
+    $likes=Comment::where('post_id',$id)->get()->all();
+
+
+
+
+    if($post->user_id!= $user_id){
+        return response()->json([
+            'message'=> 'not allowed to delete others post'
+        ]);
+    }
+
+    foreach($comments as $comments){
+        $comments->delete();
+        }
     $post->delete();
     return response()->json([
-        'status'=>'post deleted'
+        'status'=>true,
+        'comment'=>'all comments deleted',
+        'Post'=>'post deleted'
       ]);
   }
 
