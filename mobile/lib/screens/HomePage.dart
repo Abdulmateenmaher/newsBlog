@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Post.dart';
-import '../Services/postServices.dart';
 import '../constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -129,7 +128,8 @@ class _HomePageState extends State<HomePage> {
                           child: ListView.builder(
                             itemCount: posts.length,
                             itemBuilder: (BuildContext context ,int index){
-                              return Padding(
+                              return
+                                Padding(
                                   padding: const EdgeInsets.only(left: 5,right: 5,top: 5,bottom: 29),
                                   child: Stack(
                                       alignment: Alignment.bottomLeft,
@@ -166,14 +166,7 @@ class _HomePageState extends State<HomePage> {
                                                             padding:  EdgeInsets.only(right: 30,top: 10),
                                                             child:  Row(children: [
                                                               GestureDetector(
-                                                                  onTap:()async{
-                                                                    setState(() {
-                                                                      isLiked=!isLiked;
-                                                                      if(isLiked==true){
-                                                                        submitLike(index,barear);
-                                                                      }
-                                                                    });
-                                                                  },
+
                                                                   child: isLiked==true? Icon(CupertinoIcons.hand_thumbsup):Icon(CupertinoIcons.hand_thumbsup_fill,color: Colors.blue.shade800,)
                                                               ),
                                                               SizedBox(width: 20,),

@@ -12,7 +12,7 @@ class _SinglePostState extends State<SinglePost> {
   Widget build(BuildContext context) {
     return  Scaffold(
     appBar: AppBar(
-      title: Text('View Single Post'),
+      title: const Text('View Single Post'),
     )
     );
   }
