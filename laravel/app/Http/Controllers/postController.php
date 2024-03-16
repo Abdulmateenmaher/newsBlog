@@ -12,21 +12,19 @@ class postController extends Controller
   public function index(){
 
 
-   $post=Post::orderBy("created_at","desc")->get();
+   $post=Post::with('comments','likes')->orderBy("created_at","desc")->get();
    return response()->json([
-    "posts"=> $post
+    "data"=> $post
    ]);
 
   }
 
   public function show($id){
 
-    $comments=Comment::where('post_id',$id)->get()->all();
-    $post=Post::where('id',$id)->withCount('comments','likes')->get();
+    $post=Post::where('id',$id)->withCount('comments','likes')->with('comments','likes')->get();
 
     return response()->json([
         "post"=>$post,
-        "comments"=>$comments
     ]);
   }
 
@@ -96,9 +94,14 @@ class postController extends Controller
         ]);
     }
 
-    foreach($comments as $comments){
-        $comments->delete();
-        }
+    // foreach($comments as $comments){
+    //     $comments->delete();
+    //     }
+    $post->comments()->delete();
+
+    $post->delete();
+
+
     $post->delete();
     return response()->json([
         'status'=>true,

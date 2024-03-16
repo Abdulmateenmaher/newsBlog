@@ -25,6 +25,7 @@ Route::group([
     "middleware"=>["auth:sanctum"]
 ],function(){
 
+Route::get('users',[ApiController::class,"index"]);
 Route::get('profile',[ApiController::class,"profile"]);
 Route::get('logout',[ApiController::class,"logout"]);
 
@@ -39,7 +40,7 @@ Route::delete('posts/{id}',[postController::class,'destroy']);
 Route::get('posts/{id}/comments',[commentController::class,'index']);
 Route::post('posts/{id}/comments',[commentController::class,'store']);
 Route::put('comments/{id}',[commentController::class,'update']);
-Route::delete('/comments/{id}',[commentController::class,'destroy']);
+Route::delete('comments/{id}',[commentController::class,'destroy']);
 
 // Route::post('/posts/{id}/like',[likeController::class,'create']);
 Route::get('/posts/{id}/likes/',[likeController::class,'index']);

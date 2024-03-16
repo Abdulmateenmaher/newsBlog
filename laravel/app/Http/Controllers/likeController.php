@@ -11,14 +11,15 @@ class likeController extends Controller
 {
 
     public function index($id){
-        $likes=Like::all()->where('post_id',$id);
-        $count=$likes->count();
-        $post=Post::find($id);
+        //$likes=Like::all()->where('post_id',$id);
+        $post=Post::with('likes')->orderBy("created_at","desc")->get();
+       // $count=$likes->count();
+      //  $post=Post::find($id);
 
       return response()->json([
        'post'=>$post,
-       'all likes'=>$count,
-       'likes'=>$likes
+       //'all likes'=>$count,
+       //'likes'=>$likes
       ]);
     }
     public function like($id){
@@ -44,7 +45,8 @@ class likeController extends Controller
                 'message '=> 'you liked already'
                 ]);
             }
-            }
+        }
+
     public function dislike($id){
 
         $like=Like::where('user_id',\Auth::user()->id)->where('post_id',$id);

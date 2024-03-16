@@ -11,11 +11,10 @@ class commentController extends Controller
     //
     public function index($id){
         $post=Post::find($id);
-
-
-
+        $comments =  Comment::where('post_id',$id)->get();
         return response()->json([
-            'post'=>$post->comments()->with('user:id,name,image'),
+            'post'=>$post,
+            'comments'=>$comments
         ]);
 
     }
@@ -35,6 +34,25 @@ class commentController extends Controller
             'status'=>'comment created',
             'comment'=>$comment
         ]);
+    }
+
+    public function update($id , Request $request){
+        $comment=Comment::find($id);
+        $authuUser_id=\Auth()->user()->id;
+        $commentUserID=$comment->user_id;
+        if($commentUserID==$authuUser_id){
+            $comment->comment=$request->comment;
+        return response()->json([
+            'status'=> true,
+            'message'=>'comment updated successfull',
+            'updated comment'=>$comment
+        ]);
+        }else{
+            return response()->json([
+                'status'=> false,
+                'message'=>'this comment can only be updated by  it creator'
+            ]);
+        }
     }
 
     public function destroy($id){
