@@ -1,0 +1,1 @@
+This is Social Media project planned by abdulmateen maher for testing all nessecory todos in a flutter fully completed project, this project is based on clean archeticture, and so easy understanding of code logic.
