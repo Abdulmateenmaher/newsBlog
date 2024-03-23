@@ -1,32 +1,28 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsblog/bloc/authUser/authBloc.dart';
 import 'package:newsblog/bloc/authUser/events.dart';
 import 'package:newsblog/bloc/authUser/states.dart';
 
-
+import '../../repositories/AuthRepositories.dart';
 import 'Posts.dart';
 import 'Register.dart';
-import 'SignIn.dart';
 
 
-class Register extends StatefulWidget {
+class Login extends StatefulWidget {
   final AuthBloc authBloc;
-  const Register({super.key, required this.authBloc});
+  const Login({super.key, required this.authBloc});
 
   @override
-  CheckState createState() => CheckState(authBloc: authBloc);
+  CheckState createState() => CheckState(authBloc:authBloc);
 }
 
-class CheckState extends State<Register> {
-  final AuthBloc authBloc;
+class CheckState extends State<Login> {
   CheckState({required this.authBloc});
-  var nameController=TextEditingController();
   var emailController=TextEditingController();
   var passwordController=TextEditingController();
-  var passwordConfirmationController=TextEditingController();
-
+  final AuthBloc authBloc;
   @override
   void initState(){
     super.initState();
@@ -34,10 +30,10 @@ class CheckState extends State<Register> {
 
   final msg=BlocBuilder<AuthBloc,AuthState>(
     builder: (context,state){
-      if(state is RegisterErrorState){
+      if(state is LoginErrorState){
         return Text(state.message);
-      }else if(state is RegisterLoadingState){
-        return Center(child: CircularProgressIndicator(),);
+      }else if(state is LoginLoadingState){
+        return const Center(child: CircularProgressIndicator(),);
       }else{
         return Container();
       }
@@ -48,8 +44,8 @@ class CheckState extends State<Register> {
     return Scaffold(
       body: BlocListener<AuthBloc,AuthState>(
         listener: (context,state){
-          if(state is UserRegisterSuccessState){
-            Navigator.push(context, (MaterialPageRoute(builder: (context)=>Posts(authBloc: authBloc,))));
+          if(state is UserLoginSuccessState){
+            Navigator.push(context, (MaterialPageRoute(builder: (context)=> Posts(authBloc: authBloc,))));
             //Navigator.pushReplacement(context, (MaterialPageRoute(builder: (context)=>Posts())));
           }
         },
@@ -58,7 +54,7 @@ class CheckState extends State<Register> {
           child: ListView(
             //crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const Row(
+               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
@@ -73,22 +69,11 @@ class CheckState extends State<Register> {
               const SizedBox(
                 height: 15.0,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(labelText: 'name'),
-                ),
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              Padding(
+               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
                   controller: emailController,
-                  obscureText: true,
-                  decoration: new InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                 ),
               ),
               const SizedBox(
@@ -102,18 +87,6 @@ class CheckState extends State<Register> {
                   decoration: const InputDecoration(labelText: 'Password'),
                 ),
               ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
-                  controller: passwordConfirmationController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'confirmPassword'),
-                ),
-              ),
-
               Row(
                 children: <Widget>[
                   Expanded(
@@ -122,8 +95,8 @@ class CheckState extends State<Register> {
                           right: 20.0, left: 20.0, top: 10.0, bottom: 25.0),
                       child: GestureDetector(
                         onTap:(){
-                          authBloc.add(RegisterButtonPressed(name:nameController.text,email:emailController.text , password: passwordController.text,passwordConfirmation:passwordConfirmationController.text));
-                           const ScaffoldMessenger(child: Text('user registered and loged in'));
+                          authBloc.add(LoginButtonPressed(email:emailController.text , password: passwordController.text));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> Posts(authBloc: authBloc,)));
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -132,7 +105,7 @@ class CheckState extends State<Register> {
                               color: Colors.blueGrey,
                               borderRadius: BorderRadius.circular(10.0)),
                           child: const Text(
-                            "Register",
+                            "Login",
                             style:
                             TextStyle(fontSize: 20.0, color: Colors.white),
                           ),
@@ -144,7 +117,7 @@ class CheckState extends State<Register> {
               ),
               Expanded(child: Container(
                 alignment: Alignment.center,
-                child: const Text("Already have account?",style: TextStyle(fontSize:16,color: Colors.blueAccent),),
+                child: const Text("Do not have account?",style: TextStyle(fontSize:16,color: Colors.blueAccent),),
               )),
               Row(
                 children: <Widget>[
@@ -154,7 +127,7 @@ class CheckState extends State<Register> {
                           right: 20.0, left: 20.0, top: 10.0, bottom: 25.0),
                       child: GestureDetector(
                         onTap: (){
-                          Navigator.push(context, (MaterialPageRoute(builder: (context)=>Login(authBloc:authBloc))));
+                          Navigator.push(context, (MaterialPageRoute(builder: (context)=>Register(authBloc:authBloc))));
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -163,7 +136,7 @@ class CheckState extends State<Register> {
                               color: const Color(0xFF3CB371),
                               borderRadius: BorderRadius.circular(10.0)),
                           child: const Text(
-                            "Login",
+                            "Register",
                             style:
                             TextStyle(fontSize: 20.0, color: Colors.white),
                           ),

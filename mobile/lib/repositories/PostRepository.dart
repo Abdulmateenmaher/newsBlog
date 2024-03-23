@@ -2,7 +2,7 @@
   import 'dart:convert';
 
 import 'package:http/http.dart%20';
-import 'package:newsblog/Model/userModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Constants/constatants.dart';
 import '../Model/PostModel.dart';
@@ -10,8 +10,8 @@ import '../Model/PostModel.dart';
 class PostRepository{
   String userUrl='$baseUrl/posts';
   Future<List<PostModel>?> getPosts() async{
-  String token=bearer;
-
+  var prefs=await SharedPreferences.getInstance();
+  String? token=prefs.getString('token');
     Response response=await get(Uri.parse(userUrl),headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -22,8 +22,7 @@ class PostRepository{
       return result.map((e) => PostModel.fromJson(e)).toList();
     }else{
       throw Exception(response.reasonPhrase);
-    }
+    }}
+  }
 
 
-  }
-  }

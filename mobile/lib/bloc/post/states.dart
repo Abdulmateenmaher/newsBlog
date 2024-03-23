@@ -7,7 +7,10 @@ import '../../Model/PostModel.dart';
 
 
 @immutable
-abstract class PostState extends Equatable{}
+abstract class PostState extends Equatable{
+ @override
+ List<Object?> get props=>[];
+}
 ///data loading state
 
 class PostLoadingState extends PostState{
@@ -23,10 +26,10 @@ class PostLoadingState extends PostState{
 }
 
 /// data loading error state
-///
  class PostErrorState extends PostState{
   final String error;
   PostErrorState(this.error);
   @override
   List<Object?> get props=>[error];
 }
+

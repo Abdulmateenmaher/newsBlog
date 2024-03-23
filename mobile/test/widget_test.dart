@@ -7,8 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:newsblog/main.dart';
 import 'package:newsblog/screens/HomePage.dart';
 
 void main() {

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 
 @immutable
 abstract class PostEvent extends Equatable{
+  @override
+  List<Object?> get props=>[];
   const PostEvent();
 }
 
 class LoadPostEvent extends PostEvent{
-  @override
-  List<Object?> get props=>[];
 }
+class RefreshPostEvent extends PostEvent{}
