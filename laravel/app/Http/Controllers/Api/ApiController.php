@@ -56,7 +56,8 @@ public function login(Request $request){
           return response()->json([
             "status" => true,
             "message" => "login successful",
-            "token" => $token
+            "token" => $token,
+            "data" =>$user
           ]);
         }
 

@@ -80,10 +80,6 @@ class postController extends Controller
     $user_id=\Auth()->user()->id;
 
     $post=Post::find($id);
-    // $post->comments->delete();
-    // $post->likes->delete();
-    $comments=Comment::where('post_id',$id)->get()->all();
-    $likes=Comment::where('post_id',$id)->get()->all();
 
 
 
@@ -94,10 +90,8 @@ class postController extends Controller
         ]);
     }
 
-    // foreach($comments as $comments){
-    //     $comments->delete();
-    //     }
     $post->comments()->delete();
+    $post->comments()->likes();
 
     $post->delete();
 
@@ -109,8 +103,4 @@ class postController extends Controller
         'Post'=>'post deleted'
       ]);
   }
-
-
-
-
 }
